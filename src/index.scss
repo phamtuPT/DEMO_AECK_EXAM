@@ -1,0 +1,330 @@
+@font-face {
+  font-family: "Lato";
+  src: local("Lato"), url(./assets/LATO-REGULAR.d7877a7d.woff2) format("woff2"),
+    url(./assets/lato-regular.ttf) format("woff"),
+    url(./assets/lato-regular.woff) format("truetype");
+
+  font-style: normal, italic, oblique;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+:root {
+  height: 100%;
+  color: #262626;
+  font-family: "Lato", sans-serif;
+}
+
+body {
+  font-size: 14px;
+}
+
+::selection {
+  color: #fff;
+  background: #ce1628;
+}
+
+.container-custom {
+  // width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-right: auto;
+  margin-left: auto;
+
+  @media screen and (min-width: 400px) {
+    max-width: 380px;
+  }
+  @media screen and (min-width: 576px) {
+    max-width: 540px;
+  }
+  @media screen and (min-width: 768px) {
+    max-width: 720px;
+  }
+  @media screen and (min-width: 992px) {
+    max-width: 960px;
+  }
+  @media screen and (min-width: 1200px) {
+    max-width: 1384px;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+hr.line {
+  border-top: 1px solid #e8e8e8;
+}
+
+.ant-card-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: rgba(24, 144, 255, 0.2);
+  outline: 1px solid rgba(24, 144, 255, 0.2);
+}
+
+.link,
+a:hover {
+  color: #ce1628;
+}
+
+.link {
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.auth-form {
+  position: relative;
+  max-width: 465px;
+  color: #252b2f;
+  margin: 0 auto 3.125rem;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  background-color: #fff;
+  @media screen and (min-width: 380px) {
+    max-width: 340px;
+  }
+  @media screen and (min-width: 576px) {
+    max-width: 420px;
+  }
+  @media screen and (min-width: 768px) {
+    max-width: 420px;
+  }
+  @media screen and (min-width: 992px) {
+    max-width: 465px;
+  }
+  @media screen and (min-width: 1200px) {
+    max-width: 465px;
+  }
+}
+
+// CUSTOM ANTD COMPONENT
+
+.ant-btn-primary {
+  color: #fff;
+  border-color: #ce1628;
+  background: #ce1628;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+}
+
+.ant-btn-primary:not(:disabled):not(.ant-btn-disabled):hover {
+  color: #fff;
+  border-color: #db3b46;
+  background: #db3b46;
+}
+
+.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+  color: #fff;
+  border-color: #db3b46;
+}
+
+.auth-form label {
+  font-size: 16px !important;
+  color: #666e7e !important;
+}
+
+.ant-input:hover,
+.ant-input:focus {
+  border-color: #db3b46 !important;
+}
+
+.ant-input:focus {
+  box-shadow: none;
+}
+
+.ant-input:hover {
+  box-shadow: 0 0 0 2px rgba(206, 22, 40, 0.2) !important;
+}
+
+.ant-input-affix-wrapper:hover,
+.ant-input-affix-wrapper:focus {
+  border-color: #db3b46 !important;
+  box-shadow: 0 0 0 2px rgba(206, 22, 40, 0.2) !important;
+  border-right-width: 1px !important;
+  outline: 0;
+  color: #000;
+}
+
+.ant-input-affix-wrapper:focus-within {
+  border-color: inherit !important;
+  box-shadow: none !important;
+  border-right-width: 1px !important;
+  outline: 0;
+  color: #000;
+}
+
+.ant-input-affix-wrapper {
+  .ant-input:hover {
+    box-shadow: none !important;
+  }
+}
+
+.ant-form-item-explain-error {
+  display: none;
+}
+
+// ANTD MODAL CUSTOM
+
+.ant-drawer-mask,
+.ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.ant-modal-content {
+  padding: 0 !important;
+}
+
+// ANTD TAG CUSTOM
+
+.ant-tag-error {
+  color: #ff4d4f;
+  background: #fff2f0;
+  border-color: #ffccc7;
+}
+
+.ant-tag-success {
+  color: #2eb553;
+  background: #e6f5e8;
+  border-color: #a0dbaa;
+}
+
+//ANDT SLIDER CUSTOM
+
+.ant-layout-sider {
+  min-width: 250px !important;
+  max-width: 250px !important;
+}
+
+.ant-layout-sider.ant-layout-sider-collapsed {
+  min-width: 80px !important;
+  max-width: 80px !important;
+}
+
+//ANTD MENU CUSTOM
+
+.ant-menu-item {
+  border-radius: 0 !important;
+}
+
+.ant-menu-item:hover {
+  background-color: transparent !important;
+}
+
+.ant-menu-item-selected {
+  color: #ce1628 !important;
+  background-color: transparent !important;
+}
+
+.ant-menu-item:active {
+  background-color: #ffccc7 !important;
+}
+
+//ANTD SLIDER CUSTOM
+
+.ant-slider-handle {
+  display: none;
+}
+
+.ant-slider-track {
+  background-color: #ce1628 !important;
+  height: 5px!important;
+  border-radius: 4px!important;
+}
+
+// ANTD DRAWER CUSTOM
+
+.ant-drawer-content-wrapper{
+  width: 480px!important;
+}
+
+// ANTD FORM CUSTOM
+
+.profile-form .ant-form-item-label {
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+// CUSTOM SUBMIT MODAL
+
+.custom-submit-modal {
+  .ant-modal-content {
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .ant-modal-header {
+    padding: 24px 24px 16px 24px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+
+    .ant-modal-title {
+      font-size: 18px !important;
+      font-weight: 600 !important;
+      color: #262626 !important;
+    }
+  }
+
+  .ant-modal-body {
+    padding: 20px 24px !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    color: #595959 !important;
+  }
+
+  .ant-modal-footer {
+    padding: 16px 24px 24px 24px !important;
+    border-top: 1px solid #f0f0f0 !important;
+
+    .ant-btn {
+      height: 40px !important;
+      border-radius: 8px !important;
+      font-weight: 500 !important;
+      font-size: 14px !important;
+      min-width: 80px !important;
+      margin-left: 12px !important;
+    }
+
+    .ant-btn-default {
+      border-color: #d9d9d9 !important;
+      color: #595959 !important;
+
+      &:hover {
+        border-color: #40a9ff !important;
+        color: #40a9ff !important;
+        background: #f6ffed !important;
+      }
+    }
+  }
+}
