@@ -500,11 +500,11 @@ const ExamTaking = () => {
             </h2>
             <div className="flex justify-between items-center">
               <p>Họ tên</p>
-              <p>{userInfo?.name || "Anh Em Cây Khế"}</p>
+              <p>Thí sinh ẩn danh</p>
             </div>
             <div className="flex justify-between items-center">
               <p>Mã dự thi</p>
-              <p>{userInfo?.id || "123456789"}</p>
+              <p>GUEST{Date.now().toString().slice(-6)}</p>
             </div>
           </div>
           <ExamRemainingTime

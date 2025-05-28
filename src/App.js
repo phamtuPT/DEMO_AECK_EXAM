@@ -202,35 +202,17 @@ function App() {
         {/* User Exam Routes */}
         <Route
           path="/exams"
-          element={
-            <RouteComponent
-              isLogin={true}
-              Component={ExamListUser}
-              redirectPath={"/dang-nhap"}
-            />
-          }
+          element={<ExamListUser />}
         ></Route>
 
         <Route
           path="/exam/:examId"
-          element={
-            <RouteComponent
-              isLogin={true}
-              Component={ExamTaking}
-              redirectPath={"/dang-nhap"}
-            />
-          }
+          element={<ExamTaking />}
         ></Route>
 
         <Route
           path="/exam-result/:examId"
-          element={
-            <RouteComponent
-              isLogin={true}
-              Component={ExamResult}
-              redirectPath={"/dang-nhap"}
-            />
-          }
+          element={<ExamResult />}
         ></Route>
         <Route path="/tai-khoan" element={<HomeLayout />}>
           <Route
