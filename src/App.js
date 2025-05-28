@@ -25,6 +25,7 @@ import UserManagement from "./pages/UserManagement.jsx";
 import ExamResultsAdmin from "./pages/ExamResultsAdmin.jsx";
 import Register from "./pages/Register.jsx";
 import DemoAccounts from "./pages/DemoAccounts.jsx";
+import AntiCheat from "./components/AntiCheat.jsx";
 
 import AuthLayout from "./hoc/AuthLayout.jsx";
 import ExamList from "./pages/ExamList.jsx";
@@ -37,6 +38,7 @@ import AdminRouteComponent from "./hoc/AdminRouteComponent.jsx";
 function App() {
   return (
     <BrowserRouter>
+      <AntiCheat />
       <Routes>
         <Route path="*" element={<Navigate to="/"></Navigate>} />
         <Route path="/" element={<DemoAccounts />}></Route>
