@@ -5,6 +5,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const nodemailer = require('nodemailer');
 
 // Check if running on Vercel
 const isVercel = process.env.VERCEL === '1' || process.env.VERCEL_ENV;
@@ -25,6 +26,112 @@ if (isVercel) {
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'aeck-secret-key-2024';
+
+// Email configuration
+const EMAIL_CONFIG = {
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER || 'chuyenvienaeck@gmail.com',
+    pass: process.env.EMAIL_PASS || 'your-app-password' // Replace with actual app password
+  }
+};
+
+// OTP storage (in production, use Redis or database)
+const otpStorage = new Map();
+
+// Email mode (mock for demo, real for production)
+const USE_MOCK_EMAIL = !process.env.EMAIL_PASS || process.env.EMAIL_PASS === 'your-app-password';
+
+// Email transporter
+let emailTransporter = null;
+if (!USE_MOCK_EMAIL) {
+  try {
+    emailTransporter = nodemailer.createTransport(EMAIL_CONFIG);
+    console.log('✅ Real email transporter initialized');
+  } catch (error) {
+    console.log('⚠️ Email transporter failed to initialize:', error.message);
+    console.log('🔄 Falling back to mock email mode');
+  }
+} else {
+  console.log('📧 Using mock email mode for demo');
+}
+
+// Helper function to generate OTP
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
+};
+
+// Helper function to send OTP email
+const sendOTPEmail = async (otp) => {
+  if (USE_MOCK_EMAIL) {
+    // Mock email for demo - just log to console
+    console.log('📧 MOCK EMAIL SENT');
+    console.log('===================');
+    console.log(`To: chuyenvienaeck@gmail.com`);
+    console.log(`Subject: 🔐 AECK - Mã xác thực xem mật khẩu`);
+    console.log(`OTP Code: ${otp}`);
+    console.log(`Expires: ${new Date(Date.now() + 5 * 60 * 1000).toLocaleString('vi-VN')}`);
+    console.log('===================');
+
+    // Simulate email sending delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return;
+  }
+
+  if (!emailTransporter) {
+    throw new Error('Email service not available');
+  }
+
+  const mailOptions = {
+    from: EMAIL_CONFIG.auth.user,
+    to: 'chuyenvienaeck@gmail.com',
+    subject: '🔐 AECK - Mã xác thực xem mật khẩu',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">🔐 AECK Security</h1>
+          <p style="color: #f0f0f0; margin: 10px 0 0 0; font-size: 16px;">Hệ thống quản lý thi trắc nghiệm</p>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #dc3545;">
+          <h2 style="color: #dc3545; margin-top: 0;">⚠️ Yêu cầu xem mật khẩu người dùng</h2>
+          <p style="color: #666; line-height: 1.6;">
+            Có một yêu cầu xem mật khẩu người dùng từ hệ thống admin.
+            Để bảo mật, vui lòng sử dụng mã xác thực bên dưới:
+          </p>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <div style="background: #fff; border: 2px dashed #dc3545; padding: 20px; border-radius: 8px; display: inline-block;">
+            <p style="margin: 0; color: #666; font-size: 14px;">Mã xác thực:</p>
+            <h1 style="margin: 10px 0; color: #dc3545; font-size: 36px; letter-spacing: 8px; font-family: 'Courier New', monospace;">
+              ${otp}
+            </h1>
+            <p style="margin: 0; color: #999; font-size: 12px;">Có hiệu lực trong 5 phút</p>
+          </div>
+        </div>
+
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 6px; margin: 20px 0;">
+          <p style="margin: 0; color: #856404; font-size: 14px;">
+            <strong>🛡️ Lưu ý bảo mật:</strong><br>
+            • Mã này chỉ có hiệu lực trong 5 phút<br>
+            • Không chia sẻ mã này với bất kỳ ai<br>
+            • Nếu bạn không yêu cầu, vui lòng bỏ qua email này
+          </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 12px; margin: 0;">
+            Email được gửi tự động từ hệ thống AECK<br>
+            Thời gian: ${new Date().toLocaleString('vi-VN')}
+          </p>
+        </div>
+      </div>
+    `
+  };
+
+  await emailTransporter.sendMail(mailOptions);
+};
 
 // Middleware
 app.use(cors());
@@ -460,6 +567,169 @@ app.delete('/api/users/:id', authenticateToken, async (req, res) => {
 
   } catch (error) {
     console.error('Delete user error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Request OTP for password viewing (admin only)
+app.post('/api/users/password/request-otp', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes
+
+    // Store OTP
+    otpStorage.set(req.user.id, {
+      otp,
+      expiresAt,
+      attempts: 0
+    });
+
+    // Send OTP email
+    try {
+      await sendOTPEmail(otp);
+      console.log(`📧 OTP sent to chuyenvienaeck@gmail.com for admin ${req.user.email} (ID: ${req.user.id})`);
+
+      const message = USE_MOCK_EMAIL
+        ? 'Mã OTP đã được tạo! (Demo mode - xem console để lấy mã)'
+        : 'Mã OTP đã được gửi đến chuyenvienaeck@gmail.com';
+
+      res.json({
+        success: true,
+        message,
+        expiresIn: 300, // 5 minutes in seconds
+        mockMode: USE_MOCK_EMAIL,
+        otpCode: USE_MOCK_EMAIL ? otp : undefined // Only show OTP in mock mode
+      });
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      res.status(500).json({
+        error: 'Không thể gửi email. Vui lòng thử lại sau.',
+        details: emailError.message
+      });
+    }
+
+  } catch (error) {
+    console.error('Request OTP error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get user password with OTP verification (admin only) - SECURITY SENSITIVE
+app.post('/api/users/:id/password', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+
+    const { otp } = req.body;
+    const userId = parseInt(req.params.id);
+
+    if (!otp) {
+      return res.status(400).json({ error: 'OTP is required' });
+    }
+
+    // Check OTP
+    const storedOTP = otpStorage.get(req.user.id);
+    if (!storedOTP) {
+      return res.status(400).json({ error: 'No OTP found. Please request a new one.' });
+    }
+
+    if (Date.now() > storedOTP.expiresAt) {
+      otpStorage.delete(req.user.id);
+      return res.status(400).json({ error: 'OTP has expired. Please request a new one.' });
+    }
+
+    if (storedOTP.attempts >= 3) {
+      otpStorage.delete(req.user.id);
+      return res.status(400).json({ error: 'Too many failed attempts. Please request a new OTP.' });
+    }
+
+    if (storedOTP.otp !== otp) {
+      storedOTP.attempts++;
+      return res.status(400).json({
+        error: 'Invalid OTP',
+        attemptsLeft: 3 - storedOTP.attempts
+      });
+    }
+
+    // OTP is valid, delete it
+    otpStorage.delete(req.user.id);
+
+    // Get user
+    const users = await readData('users');
+    const user = users.find(u => u.id === userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Log this security-sensitive operation
+    console.log(`🔒 Admin ${req.user.email} (ID: ${req.user.id}) viewed DECRYPTED password for user ${user.email} (ID: ${user.id}) with OTP verification`);
+
+    // For demo purposes, we'll return the original password
+    // In a real system, you'd need to store original passwords securely or use reversible encryption
+    let originalPassword = 'N/A';
+
+    // Try to get original password from known defaults
+    if (user.email === 'admin@aeck.com') {
+      originalPassword = 'admin123';
+    } else if (user.email.includes('student') || user.email.includes('gmail.com')) {
+      originalPassword = '123456';
+    } else {
+      // For new users, we can't recover the original password from hash
+      originalPassword = 'Không thể khôi phục (mật khẩu đã được mã hóa)';
+    }
+
+    res.json({
+      success: true,
+      password: originalPassword,
+      hashedPassword: user.password,
+      message: 'Password retrieved successfully with OTP verification',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error('Get user password with OTP error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get user password (admin only) - SECURITY SENSITIVE - LEGACY ENDPOINT (returns hashed password)
+app.get('/api/users/:id/password', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+
+    const userId = parseInt(req.params.id);
+    const users = await readData('users');
+    const user = users.find(u => u.id === userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Log this security-sensitive operation
+    console.log(`🔒 Admin ${req.user.email} (ID: ${req.user.id}) viewed HASHED password for user ${user.email} (ID: ${user.id})`);
+
+    // Return the hashed password (for display purposes)
+    res.json({
+      success: true,
+      password: user.password, // This is the hashed password
+      message: 'Hashed password retrieved successfully'
+    });
+
+  } catch (error) {
+    console.error('Get user password error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

@@ -103,6 +103,23 @@ class ApiService {
     });
   }
 
+  async getUserPassword(userId) {
+    return this.request(`/users/${userId}/password`);
+  }
+
+  async requestPasswordOTP() {
+    return this.request('/users/password/request-otp', {
+      method: 'POST'
+    });
+  }
+
+  async getUserPasswordWithOTP(userId, otp) {
+    return this.request(`/users/${userId}/password`, {
+      method: 'POST',
+      body: JSON.stringify({ otp })
+    });
+  }
+
   // Health check
   async healthCheck() {
     return this.request('/health');
