@@ -34,5 +34,34 @@
     "role": "student",
     "isActive": true,
     "createdAt": "2025-05-29T07:52:10.477Z"
+  },
+  {
+    "id": 5,
+    "name": "Test User 1748507590587",
+    "email": "testuser1748507590587@example.com",
+    "password": "$2a$10$.p94S3oM.d9O67MbFqg69e.iDfg2689y7qXDOzbQ41kdAey5kicii",
+    "role": "student",
+    "isActive": true,
+    "createdAt": "2025-05-29T08:33:10.673Z",
+    "createdBy": 1
+  },
+  {
+    "id": 6,
+    "name": "Hải Hoàng",
+    "email": "hoang123@gmail.com",
+    "password": "$2a$10$7NVfyI3Qq9ssG/uSPTmVTOyyyL0MO6kvLLUdPKNj9sV/.frWSvbg.",
+    "role": "student",
+    "isActive": true,
+    "createdAt": "2025-05-29T08:34:39.402Z"
+  },
+  {
+    "id": 7,
+    "name": "Auth Test User 1748507911404",
+    "email": "authtest1748507911404@example.com",
+    "password": "$2a$10$/xff8hUujmmpBmM0grWoPelgV1I63T1xW8N2QdDSCqykV4oHPYFlu",
+    "role": "student",
+    "isActive": true,
+    "createdAt": "2025-05-29T08:38:31.479Z",
+    "createdBy": 1
   }
 ]

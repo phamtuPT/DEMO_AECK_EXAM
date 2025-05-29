@@ -74,9 +74,33 @@ class ApiService {
     return { success: true };
   }
 
-  // User methods
+  // User management methods (admin only)
   async getUsers() {
     return this.request('/users');
+  }
+
+  async getUserStats() {
+    return this.request('/users/stats');
+  }
+
+  async createUser(userData) {
+    return this.request('/users', {
+      method: 'POST',
+      body: JSON.stringify(userData)
+    });
+  }
+
+  async updateUser(userId, userData) {
+    return this.request(`/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData)
+    });
+  }
+
+  async deleteUser(userId) {
+    return this.request(`/users/${userId}`, {
+      method: 'DELETE'
+    });
   }
 
   // Health check

@@ -58,7 +58,7 @@ const AdminLogin = () => {
       {/* Demo Account Info */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <h3 className="text-sm font-semibold text-blue-800 mb-2">Tài khoản demo:</h3>
-        <p className="text-sm text-blue-700 mb-1">Email: <code>admin@tsa.com</code></p>
+        <p className="text-sm text-blue-700 mb-1">Email: <code>admin@aeck.com</code></p>
         <p className="text-sm text-blue-700">Mật khẩu: <code>admin123</code></p>
       </div>
 
@@ -85,7 +85,7 @@ const AdminLogin = () => {
         autoComplete="off"
         disabled={loading}
         initialValues={{
-          email: "admin@tsa.com",
+          email: "admin@aeck.com",
           password: "admin123"
         }}
       >
@@ -150,7 +150,7 @@ const AdminLogin = () => {
             🔑 Tài khoản Admin Demo:
           </p>
           <div className="text-xs text-blue-700">
-            <div>Email: <code className="bg-white px-1 rounded">admin@tsa.com</code></div>
+            <div>Email: <code className="bg-white px-1 rounded">admin@aeck.com</code></div>
             <div>Mật khẩu: <code className="bg-white px-1 rounded">admin123</code></div>
           </div>
         </div>

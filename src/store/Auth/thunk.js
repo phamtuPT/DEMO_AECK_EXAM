@@ -154,7 +154,47 @@ export const resetPassword = (token, newPassword) => {
 export const adminLogin = (credentials) => {
   return async (dispatch) => {
     try {
-      // Check credentials against mock database
+      // Try server login first
+      try {
+        const result = await storageService.login(credentials);
+        if (result.success && result.user.role === 'admin') {
+          const adminData = {
+            id: result.user.id,
+            email: result.user.email,
+            name: result.user.name,
+            role: result.user.role
+          };
+
+          // Store both tokens for compatibility
+          localStorage.setItem("adminToken", `admin_token_${result.user.id}`);
+          localStorage.setItem("authToken", localStorage.getItem("authToken") || `admin_token_${result.user.id}`);
+          localStorage.setItem("userRole", "admin");
+          localStorage.setItem("userInfo", JSON.stringify(adminData));
+
+          dispatch({
+            type: actionTypes.ADMIN_LOGIN,
+            payload: adminData,
+          });
+
+          dispatch({
+            type: actionTypes.SET_USER_ROLE,
+            payload: "admin",
+          });
+
+          dispatch({
+            type: actionTypes.USER_IS_LOGIN,
+            payload: true,
+          });
+
+          return { success: true, user: adminData, message: result.message };
+        } else if (result.success && result.user.role !== 'admin') {
+          throw new Error("Tài khoản này không có quyền admin");
+        }
+      } catch (serverError) {
+        console.log('Server admin login failed, trying localStorage:', serverError.message);
+      }
+
+      // Fallback to localStorage check
       const users = mockDatabase.getUsers();
       const admin = users.find(user =>
         user.email === credentials.email &&
@@ -171,7 +211,9 @@ export const adminLogin = (credentials) => {
           role: admin.role
         };
 
+        // Store both tokens for compatibility
         localStorage.setItem("adminToken", `admin_token_${admin.id}`);
+        localStorage.setItem("authToken", `admin_token_${admin.id}`);
         localStorage.setItem("userRole", "admin");
         localStorage.setItem("userInfo", JSON.stringify(adminData));
 
@@ -190,7 +232,7 @@ export const adminLogin = (credentials) => {
           payload: true,
         });
 
-        return { success: true, user: adminData };
+        return { success: true, user: adminData, message: "Đăng nhập admin thành công! (LocalStorage)" };
       } else {
         throw new Error("Thông tin đăng nhập admin không đúng");
       }
