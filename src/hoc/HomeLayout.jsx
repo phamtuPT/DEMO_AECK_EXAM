@@ -15,13 +15,21 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu, Button, theme, Dropdown } from "antd";
 import Footer from "../components/Footer";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/Auth/thunk";
 const { Header, Sider, Content } = Layout;
 const HomeLayout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(true);
+
+  // Get user info from Redux store
+  const userInfo = useSelector((state) => state.authReducer.userInfo);
+  const isAuthenticated = useSelector((state) => state.authReducer.isLogin);
+
+  // Debug: Log auth state
+  console.log("HomeLayout - isAuthenticated:", isAuthenticated);
+  console.log("HomeLayout - userInfo:", userInfo);
   const handleLogout = () => {
     dispatch(logout());
     navigate("/dang-nhap");
@@ -110,7 +118,7 @@ const HomeLayout = () => {
                   <FileTextOutlined />
                 </Link>
               ),
-              label: "Bài thi Đánh giá tư duy - TSA",
+              label: "Bài thi Đánh giá tư duy - AECK",
             },
             {
               key: "3",
@@ -163,7 +171,12 @@ const HomeLayout = () => {
                   src={require("../assets/userAvateDefault.png")}
                   alt="userAvatar"
                 />
-                <p className="m-0">demo_account@gmail.com</p>
+                <p className="m-0">
+                  {isAuthenticated && userInfo
+                    ? (userInfo.email || userInfo.name || "User")
+                    : "Thí sinh ẩn danh"
+                  }
+                </p>
                 <DownOutlined className="text-[12px] mt-1" />
               </div>
             </Dropdown>

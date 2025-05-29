@@ -16,7 +16,7 @@ const HeaderExam = ({ className, examTitle }) => {
         alt="logo-short"
       />
       <h2 className="m-0 font-bold text-[18px]">
-        {examTitle || nameOfExam || "Thi thử ĐGTD - TSA 2024"}
+        {examTitle || nameOfExam || "Thi thử ĐGTD - AECK 2024"}
       </h2>
     </header>
   );

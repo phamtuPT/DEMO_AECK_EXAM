@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Card, Row, Col, Statistic, Progress, Button, Table, Tag, Avatar } from "antd";
@@ -17,7 +17,17 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const userInfo = useSelector((state) => state.authReducer.userInfo);
+  const isAuthenticated = useSelector((state) => state.authReducer.isLogin);
   const examResults = useSelector((state) => state.examReducer);
+
+  // Check authentication status and clear localStorage if needed
+  useEffect(() => {
+    if (!isAuthenticated) {
+      // Clear any stale user data from localStorage
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("token");
+    }
+  }, [isAuthenticated]);
 
   // Mock data for demo purposes
   const mockStats = {
@@ -130,9 +140,9 @@ const Dashboard = () => {
               <Avatar size={64} icon={<UserOutlined />} />
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Xin chào, {userInfo?.email || "Thí sinh"}!
+                  Xin chào, {userInfo?.name || userInfo?.email || "Thí sinh ẩn danh"}!
                 </h1>
-                <p className="text-gray-600">Chào mừng bạn đến với hệ thống thi TSA</p>
+                <p className="text-gray-600">Chào mừng bạn đến với hệ thống thi AECK</p>
               </div>
             </div>
             <div className="flex space-x-3">

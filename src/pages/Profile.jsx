@@ -1,10 +1,20 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Tooltip, Card, Input, Button, Form } from "antd";
 import userImg from "../assets/user.png";
 import { FormOutlined, CheckCircleTwoTone } from "@ant-design/icons";
 import { ReactComponent as AwardImg } from "../assets/icon-test-taker.svg";
 import { ReactComponent as TodoImg } from "../assets/icon-test-taker-todo.svg";
 const Profile = () => {
+  // Get user info from Redux store
+  const userInfo = useSelector((state) => state.authReducer.userInfo);
+  const isAuthenticated = useSelector((state) => state.authReducer.isLogin);
+
+  // Display user info or fallback
+  const displayEmail = userInfo?.email || "Thí sinh ẩn danh";
+  const displayName = userInfo?.name || "Chưa cập nhật";
+  const displayId = userInfo?.id || "N/A";
+
   const onFinish = (values) => {};
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -18,11 +28,11 @@ const Profile = () => {
             alt="user-image"
             className="w-[108px] h-[108px] object-cover"
           />
-          <p className="mb-2">demo_account@gmail.com</p>
+          <p className="mb-2">{displayEmail}</p>
           <div className="flex items-center">
             {" "}
             <Tooltip placement="top" title="Mã hồ sơ">
-              <p className="mx-2 my-0">12334563</p>
+              <p className="mx-2 my-0">{displayId}</p>
             </Tooltip>
             <Tooltip placement="top" title="Sửa mã hồ sơ">
               <FormOutlined className="text-primary cursor-pointer" />
@@ -61,19 +71,19 @@ const Profile = () => {
             <p className="m-0">Email:</p>
             <Input
               disabled
-              value={"demo_account@gmail.com"}
+              value={displayEmail}
               className="min-h-[46px] w-9/12"
             />
           </div>
           <div className="flex justify-between items-center mb-6">
             <p className="m-0">Xác thực email:</p>
             <div
-              disabled
-              value={"demo_account@gmail.com"}
               className="min-h-[46px] w-9/12 text-start flex items-center"
             >
-              <p className="m-0 mx-1">Đã xác thực</p>
-              <CheckCircleTwoTone />
+              <p className="m-0 mx-1">
+                {isAuthenticated ? "Đã xác thực" : "Chưa xác thực"}
+              </p>
+              {isAuthenticated && <CheckCircleTwoTone />}
             </div>
           </div>
           <div className="flex justify-between items-center mb-6">
@@ -105,6 +115,7 @@ const Profile = () => {
             <Form.Item
               label="Họ tên"
               name="username"
+              initialValue={displayName}
               rules={[
                 {
                   required: true,
@@ -114,6 +125,7 @@ const Profile = () => {
               <Input
                 placeholder="Điền đầy đủ theo họ tên trên CMND/CCCD"
                 className="min-h-[46px]"
+                defaultValue={displayName}
               />
             </Form.Item>
             <Form.Item

@@ -18,6 +18,8 @@ import {
   ClockCircleOutlined,
   FileTextOutlined,
   SearchOutlined,
+  UserOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 import { getExams } from "../store/Exam/thunk/examThunk";
 import mockDatabase from "../data/mockDatabase";
@@ -123,17 +125,47 @@ const ExamListUser = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Title level={1} className="text-blue-600">
-            Danh sách đề thi TSA
-          </Title>
-          <Text className="text-gray-600 text-lg">
-            Chọn đề thi phù hợp để bắt đầu luyện tập
-          </Text>
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <img
+                className="h-8"
+                src={require("../assets/logo-short.svg").default}
+                alt="AECK Logo"
+              />
+              <Title level={3} className="m-0 text-blue-600">
+                Hệ thống AECK
+              </Title>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link to="/">
+                <Button icon={<HomeOutlined />}>
+                  Trang chủ
+                </Button>
+              </Link>
+              <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 rounded-lg">
+                <UserOutlined className="text-gray-500" />
+                <Text className="text-gray-600">Thí sinh ẩn danh</Text>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div className="p-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <Title level={1} className="text-blue-600">
+              Danh sách đề thi AECK
+            </Title>
+            <Text className="text-gray-600 text-lg">
+              Chọn đề thi phù hợp để bắt đầu luyện tập
+            </Text>
+          </div>
 
         {/* Filters */}
         <Card className="mb-6">
@@ -263,6 +295,7 @@ const ExamListUser = () => {
             </Title>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

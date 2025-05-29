@@ -28,6 +28,8 @@ import HeaderExam from "../components/HeaderExam";
 import FooterExam from "../components/FooterExam";
 import CircleArray from "../components/CircleArray";
 import ExamRemainingTime from "../components/ExamRemainingTime";
+import TimeUpModal from "../components/TimeUpModal";
+import useTimer from "../hooks/useTimer";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -45,11 +47,14 @@ const ExamTaking = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [markedQuestions, setMarkedQuestions] = useState(new Set()); // Câu được đánh dấu
-  const [timeLeft, setTimeLeft] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [questionTimes, setQuestionTimes] = useState({}); // Thời gian cho từng câu
   const [currentQuestionStartTime, setCurrentQuestionStartTime] = useState(Date.now());
+  const [showTimeUpModal, setShowTimeUpModal] = useState(false);
+
+  // Use custom timer hook
+  const { timeLeft, isRunning, startTimer, stopTimer } = useTimer(0);
 
   useEffect(() => {
     dispatch(getExams());
@@ -64,7 +69,7 @@ const ExamTaking = () => {
 
   useEffect(() => {
     if (exams.length > 0 && questions.length > 0) {
-      const foundExam = exams.find(e => e.id === parseInt(examId));
+      const foundExam = exams.find(e => e.id == examId || e.id === parseInt(examId));
       if (foundExam) {
         setExam(foundExam);
 
@@ -80,8 +85,8 @@ const ExamTaking = () => {
           setExamQuestions(examQuestionList);
         }
 
-        // Set timer
-        setTimeLeft(foundExam.duration * 60); // Convert minutes to seconds
+        // Start timer with Web Worker
+        startTimer(foundExam.duration * 60, handleTimeUp); // Convert minutes to seconds
       } else {
         message.error("Không tìm thấy đề thi!");
         navigate("/exams");
@@ -89,18 +94,71 @@ const ExamTaking = () => {
     }
   }, [exams, questions, examId, navigate]);
 
-  // Timer countdown
-  useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => {
-        setTimeLeft(timeLeft - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && exam) {
-      // Auto submit when time is up
-      handleSubmitExam();
-    }
-  }, [timeLeft, exam]);
+  // Handle time up
+  const handleTimeUp = () => {
+    setShowTimeUpModal(true);
+  };
+
+  // Auto submit function for time up modal
+  const handleAutoSubmit = () => {
+    setIsSubmitting(true);
+
+    // Calculate score
+    let correctAnswers = 0;
+    const totalQuestions = examQuestions.length;
+
+    examQuestions.forEach(question => {
+      const userAnswer = answers[question.id];
+      if (userAnswer) {
+        if (question.type === "MultipleAnswers") {
+          // For multiple answers, check if arrays match
+          const correctAnswer = Array.isArray(question.correctAnswer)
+            ? question.correctAnswer
+            : [question.correctAnswer];
+          const userAnswerArray = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
+
+          if (correctAnswer.length === userAnswerArray.length &&
+              correctAnswer.every(ans => userAnswerArray.includes(ans))) {
+            correctAnswers++;
+          }
+        } else {
+          // For single answer questions
+          if (userAnswer === question.correctAnswer) {
+            correctAnswers++;
+          }
+        }
+      }
+    });
+
+    const score = Math.round((correctAnswers / totalQuestions) * 100);
+    const passed = exam.settings?.passingScore ? score >= exam.settings.passingScore : score >= 60;
+
+    const result = {
+      examId: exam.id,
+      examTitle: exam.title,
+      score,
+      correctAnswers,
+      totalQuestions,
+      passed,
+      answers,
+      submittedAt: new Date().toISOString(),
+      duration: exam.duration,
+      timeSpent: exam.duration, // Full time used when auto-submitted
+    };
+
+    // Save to mock database
+    const existingResults = mockDatabase.getExamResults();
+    existingResults.push(result);
+    mockDatabase.saveExamResults(existingResults);
+
+    // Also save to localStorage for backward compatibility
+    const localResults = JSON.parse(localStorage.getItem("examResults") || "[]");
+    localResults.push(result);
+    localStorage.setItem("examResults", JSON.stringify(localResults));
+
+    message.success("Bài thi đã được nộp tự động!");
+    navigate(`/exam-result/${exam.id}`, { state: { result } });
+  };
 
   // Set start time when changing questions (accounting for existing time)
   useEffect(() => {
@@ -192,6 +250,9 @@ const ExamTaking = () => {
   };
 
   const handleSubmitExam = () => {
+    // Stop the timer
+    stopTimer();
+
     Modal.confirm({
       title: "Nộp bài thi",
       content: "Bạn có chắc chắn muốn nộp bài? Sau khi nộp bài sẽ không thể chỉnh sửa.",
@@ -595,6 +656,15 @@ const ExamTaking = () => {
           </div>
         </div>
       </div>
+
+      {/* Time Up Modal */}
+      <TimeUpModal
+        visible={showTimeUpModal}
+        onSubmit={handleAutoSubmit}
+        examTitle={exam?.title}
+        answeredCount={answeredCount}
+        totalQuestions={examQuestions.length}
+      />
     </section>
   );
 };

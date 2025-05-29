@@ -10,6 +10,7 @@ import {
   Space,
   Divider,
   Alert,
+  message,
 } from "antd";
 import {
   UserOutlined,
@@ -18,16 +19,46 @@ import {
   TrophyOutlined,
   LoginOutlined,
   EyeOutlined,
+  ReloadOutlined,
 } from "@ant-design/icons";
+import mockDatabase from "../data/mockDatabase";
 
 const { Title, Text, Paragraph } = Typography;
 
 const DemoAccounts = () => {
+  const handleResetDatabase = () => {
+    mockDatabase.resetDatabase();
+    message.success("Database đã được reset! Bài thi test 15s đã có sẵn.");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
+  const handleClearUserData = () => {
+    // Clear all user-related localStorage
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("token");
+    localStorage.removeItem("persist:auth");
+    localStorage.removeItem("persist:root");
+
+    // Clear old TSA data
+    localStorage.removeItem("tsa_users");
+    localStorage.removeItem("tsa_questions");
+    localStorage.removeItem("tsa_exams");
+    localStorage.removeItem("tsa_exam_results");
+    localStorage.removeItem("tsa_next_ids");
+
+    message.success("Đã xóa dữ liệu user! Refresh trang để thấy thay đổi.");
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
   const accounts = [
     {
       type: "admin",
       title: "👨‍💼 Tài khoản Admin",
-      email: "admin@tsa.com",
+      email: "admin@aeck.com",
       password: "admin123",
       description: "Quản trị viên hệ thống với đầy đủ quyền hạn",
       features: [
@@ -47,7 +78,7 @@ const DemoAccounts = () => {
       password: "123456",
       description: "Học sinh có thể tham gia thi và xem kết quả",
       features: [
-        "Tham gia các kỳ thi TSA",
+        "Tham gia các kỳ thi AECK",
         "Xem kết quả và phân tích",
         "Thi thử không giới hạn",
         "Theo dõi tiến độ học tập",
@@ -119,10 +150,10 @@ const DemoAccounts = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <Title level={1} className="text-gray-800 mb-4">
-            🎯 Hệ thống TSA Demo
+            🎯 Hệ thống AECK Demo
           </Title>
           <Paragraph className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Chào mừng bạn đến với hệ thống đánh giá tư duy TSA! 
+            Chào mừng bạn đến với hệ thống đánh giá tư duy AECK!
             Sử dụng các tài khoản demo bên dưới để trải nghiệm đầy đủ tính năng của hệ thống.
           </Paragraph>
         </div>
@@ -255,6 +286,23 @@ const DemoAccounts = () => {
                 Xem đề thi
               </Button>
             </Link>
+            <Button
+              size="large"
+              icon={<ReloadOutlined />}
+              onClick={handleResetDatabase}
+              type="dashed"
+            >
+              Reset Database
+            </Button>
+            <Button
+              size="large"
+              icon={<UserOutlined />}
+              onClick={handleClearUserData}
+              type="dashed"
+              danger
+            >
+              Clear User Data
+            </Button>
           </Space>
         </Card>
 

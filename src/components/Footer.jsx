@@ -4,9 +4,9 @@ const Footer = ({ className }) => {
   return (
     <footer className={clsx("text-center mt-5 text-[12px]", className)}>
       <p>
-        Copyright © 2021 by TSA.HUST
+        Copyright © 2024 by AECK
         <br />
-        Operated by FPT IS | Powered by Khaothi.Online
+        Operated by AECK Team | Powered by AECK Platform
       </p>
     </footer>
   );

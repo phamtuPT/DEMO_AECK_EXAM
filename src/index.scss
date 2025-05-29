@@ -405,3 +405,35 @@ img {
     margin-top: 50vh;
   }
 }
+
+// TIME UP MODAL
+
+.time-up-modal {
+  .ant-modal-content {
+    border-radius: 16px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .ant-modal-body {
+    padding: 0 !important;
+  }
+
+  .ant-progress-bg {
+    transition: all 0.3s ease !important;
+  }
+
+  .ant-btn-primary {
+    height: 48px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    min-width: 160px !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+
+    &:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4) !important;
+    }
+  }
+}

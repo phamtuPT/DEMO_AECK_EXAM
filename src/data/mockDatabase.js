@@ -1,4 +1,4 @@
-// Mock Database for TSA System
+// Mock Database for AECK System
 // This simulates a real database with persistent storage using localStorage
 
 class MockDatabase {
@@ -8,20 +8,20 @@ class MockDatabase {
 
   // Initialize default data if not exists
   initializeData() {
-    if (!localStorage.getItem('tsa_users')) {
-      localStorage.setItem('tsa_users', JSON.stringify(this.getDefaultUsers()));
+    if (!localStorage.getItem('aeck_users')) {
+      localStorage.setItem('aeck_users', JSON.stringify(this.getDefaultUsers()));
     }
-    if (!localStorage.getItem('tsa_questions')) {
-      localStorage.setItem('tsa_questions', JSON.stringify(this.getDefaultQuestions()));
+    if (!localStorage.getItem('aeck_questions')) {
+      localStorage.setItem('aeck_questions', JSON.stringify(this.getDefaultQuestions()));
     }
-    if (!localStorage.getItem('tsa_exams')) {
-      localStorage.setItem('tsa_exams', JSON.stringify(this.getDefaultExams()));
+    if (!localStorage.getItem('aeck_exams')) {
+      localStorage.setItem('aeck_exams', JSON.stringify(this.getDefaultExams()));
     }
-    if (!localStorage.getItem('tsa_exam_results')) {
-      localStorage.setItem('tsa_exam_results', JSON.stringify([]));
+    if (!localStorage.getItem('aeck_exam_results')) {
+      localStorage.setItem('aeck_exam_results', JSON.stringify([]));
     }
-    if (!localStorage.getItem('tsa_next_ids')) {
-      localStorage.setItem('tsa_next_ids', JSON.stringify({
+    if (!localStorage.getItem('aeck_next_ids')) {
+      localStorage.setItem('aeck_next_ids', JSON.stringify({
         user: 6,
         question: 22,
         exam: 4,
@@ -35,10 +35,10 @@ class MockDatabase {
     return [
       {
         id: 1,
-        email: "admin@tsa.com",
+        email: "admin@aeck.com",
         password: "admin123",
         role: "admin",
-        name: "Admin TSA",
+        name: "Admin AECK",
         createdAt: "2024-01-01",
         isActive: true
       },
@@ -428,8 +428,27 @@ class MockDatabase {
   getDefaultExams() {
     return [
       {
+        id: "exam-test",
+        title: "🧪 Bài thi Test - 15 giây",
+        description: "Bài thi ngắn để test chức năng hết giờ tự động nộp bài",
+        duration: 0.25, // 15 seconds (0.25 minutes)
+        totalQuestions: 3,
+        questionIds: [1, 2, 3],
+        difficulty: "easy",
+        subject: "mixed",
+        status: "active",
+        createdAt: "2024-01-15",
+        createdBy: "admin",
+        settings: {
+          shuffleQuestions: false,
+          showResults: true,
+          allowReview: true,
+          passingScore: 60,
+        }
+      },
+      {
         id: 1,
-        title: "Đề thi TSA Toán học - Đợt 1/2024",
+        title: "Đề thi AECK Toán học - Đợt 1/2024",
         description: "Đề thi đánh giá tư duy toán học chính thức đợt 1 năm 2024. Bao gồm các câu hỏi từ cơ bản đến nâng cao về đại số, hình học và giải tích.",
         duration: 90,
         totalQuestions: 40,
@@ -489,54 +508,54 @@ class MockDatabase {
 
   // CRUD Operations
   getUsers() {
-    return JSON.parse(localStorage.getItem('tsa_users') || '[]');
+    return JSON.parse(localStorage.getItem('aeck_users') || '[]');
   }
 
   getQuestions() {
-    return JSON.parse(localStorage.getItem('tsa_questions') || '[]');
+    return JSON.parse(localStorage.getItem('aeck_questions') || '[]');
   }
 
   getExams() {
-    return JSON.parse(localStorage.getItem('tsa_exams') || '[]');
+    return JSON.parse(localStorage.getItem('aeck_exams') || '[]');
   }
 
   getExamResults() {
-    return JSON.parse(localStorage.getItem('tsa_exam_results') || '[]');
+    return JSON.parse(localStorage.getItem('aeck_exam_results') || '[]');
   }
 
   // Save methods
   saveUsers(users) {
-    localStorage.setItem('tsa_users', JSON.stringify(users));
+    localStorage.setItem('aeck_users', JSON.stringify(users));
   }
 
   saveQuestions(questions) {
-    localStorage.setItem('tsa_questions', JSON.stringify(questions));
+    localStorage.setItem('aeck_questions', JSON.stringify(questions));
   }
 
   saveExams(exams) {
-    localStorage.setItem('tsa_exams', JSON.stringify(exams));
+    localStorage.setItem('aeck_exams', JSON.stringify(exams));
   }
 
   saveExamResults(results) {
-    localStorage.setItem('tsa_exam_results', JSON.stringify(results));
+    localStorage.setItem('aeck_exam_results', JSON.stringify(results));
   }
 
   // Get next ID
   getNextId(type) {
-    const ids = JSON.parse(localStorage.getItem('tsa_next_ids') || '{}');
+    const ids = JSON.parse(localStorage.getItem('aeck_next_ids') || '{}');
     const nextId = ids[type] || 1;
     ids[type] = nextId + 1;
-    localStorage.setItem('tsa_next_ids', JSON.stringify(ids));
+    localStorage.setItem('aeck_next_ids', JSON.stringify(ids));
     return nextId;
   }
 
   // Reset database
   resetDatabase() {
-    localStorage.removeItem('tsa_users');
-    localStorage.removeItem('tsa_questions');
-    localStorage.removeItem('tsa_exams');
-    localStorage.removeItem('tsa_exam_results');
-    localStorage.removeItem('tsa_next_ids');
+    localStorage.removeItem('aeck_users');
+    localStorage.removeItem('aeck_questions');
+    localStorage.removeItem('aeck_exams');
+    localStorage.removeItem('aeck_exam_results');
+    localStorage.removeItem('aeck_next_ids');
     this.initializeData();
   }
 
