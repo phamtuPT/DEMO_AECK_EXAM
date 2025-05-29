@@ -1,5 +1,6 @@
 import actionTypes from "./actions/actionTypes";
 import mockDatabase from "../../data/mockDatabase.js";
+import storageService from "../../services/storageService";
 
 export const signUp = (data) => (dispatch) => {
   try {
@@ -15,26 +16,20 @@ export const signUp = (data) => (dispatch) => {
 export const login = (data) => {
   return async (dispatch) => {
     try {
-      // Check credentials against mock database
-      const users = mockDatabase.getUsers();
-      const user = users.find(u =>
-        u.email === data.email &&
-        u.password === data.password &&
-        u.role === "student" &&
-        u.isActive
-      );
+      // Use hybrid storage service
+      const result = await storageService.login(data);
 
-      if (user) {
+      if (result.success) {
         const userData = {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role
+          id: result.user.id,
+          email: result.user.email,
+          name: result.user.name,
+          role: result.user.role
         };
 
         localStorage.setItem("mk", data.password);
         localStorage.setItem("userInfo", JSON.stringify(userData));
-        localStorage.setItem("userRole", "student");
+        localStorage.setItem("userRole", result.user.role);
 
         dispatch({
           type: actionTypes.LOGIN,
@@ -42,12 +37,16 @@ export const login = (data) => {
         });
         dispatch({
           type: actionTypes.SET_USER_ROLE,
-          payload: "student",
+          payload: result.user.role,
         });
 
-        return { success: true, user: userData };
+        return {
+          success: true,
+          user: userData,
+          message: result.message
+        };
       } else {
-        throw new Error("Email hoặc mật khẩu không đúng");
+        throw new Error(result.error);
       }
     } catch (error) {
       console.log(error);
@@ -69,12 +68,14 @@ export const isLogin = (data) => {
   };
 };
 
-export const logout = () => (dispatch) => {
+export const logout = () => async (dispatch) => {
   try {
+    // Use hybrid storage service
+    await storageService.logout();
+
     localStorage.removeItem("mk");
-    localStorage.removeItem("userInfo");
     localStorage.removeItem("adminToken");
-    localStorage.removeItem("userRole");
+
     dispatch({
       type: actionTypes.LOGOUT,
     });

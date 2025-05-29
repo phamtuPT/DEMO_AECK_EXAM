@@ -22,6 +22,7 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import mockDatabase from "../data/mockDatabase";
+import StorageStatus from "../components/StorageStatus";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -156,6 +157,11 @@ const DemoAccounts = () => {
             Chào mừng bạn đến với hệ thống đánh giá tư duy AECK!
             Sử dụng các tài khoản demo bên dưới để trải nghiệm đầy đủ tính năng của hệ thống.
           </Paragraph>
+
+          {/* Storage Status */}
+          <div className="mt-4 flex justify-center">
+            <StorageStatus />
+          </div>
         </div>
 
         {/* Alert */}
@@ -309,7 +315,7 @@ const DemoAccounts = () => {
         {/* Footer */}
         <div className="text-center mt-12 pt-8 border-t border-gray-200">
           <Text className="text-gray-500">
-            © 2024 Hệ thống đánh giá tư duy TSA - Demo Version
+            © 2024 Hệ thống đánh giá tư duy AECK - Demo Version
           </Text>
         </div>
       </div>

@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "email": "admin@aeck.com",
+    "password": "$2a$10$RDeT6WZmMcY8Fd2XsqvybOSMcrlAtWC83lSgjCn0MEMOYW6XjA4FG",
+    "role": "admin",
+    "name": "Admin AECK",
+    "createdAt": "2025-05-29T07:48:53.995Z",
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "email": "student1@gmail.com",
+    "password": "$2a$10$/zJVmAWYBXSyr9aNW2RitObWOHuQZ67.KcYYgawuWJ12iuU8J5bIy",
+    "role": "student",
+    "name": "Nguyễn Văn An",
+    "createdAt": "2025-05-29T07:48:54.070Z",
+    "isActive": true
+  },
+  {
+    "id": 3,
+    "email": "student2@gmail.com",
+    "password": "$2a$10$zJIFPNGF1k2gXkNhKGoHxOy/RxF/VqC8xwYD63A/izEqUUxlgENwW",
+    "role": "student",
+    "name": "Trần Thị Bình",
+    "createdAt": "2025-05-29T07:48:54.145Z",
+    "isActive": true
+  },
+  {
+    "id": 4,
+    "name": "Phạm Như Hoàng",
+    "email": "hoang@gmail.com",
+    "password": "$2a$10$JNUrwGRUSxjonMk7a9aLke.MV5P1OclMx4l7Rb6BxltObCMv.uihS",
+    "role": "student",
+    "isActive": true,
+    "createdAt": "2025-05-29T07:52:10.477Z"
+  }
+]

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   Form,
   Input,
@@ -19,44 +20,46 @@ import {
   EyeTwoTone,
 } from "@ant-design/icons";
 import mockDatabase from "../data/mockDatabase";
+import { login, isLogin } from "../store/Auth/thunk";
+import storageService from "../services/storageService";
 
 const { Title, Text } = Typography;
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
     setLoading(true);
-    
-    try {
-      // Check if email already exists
-      const users = mockDatabase.getUsers();
-      const existingUser = users.find(user => user.email === values.email);
-      
-      if (existingUser) {
-        message.error("Email này đã được sử dụng!");
-        setLoading(false);
-        return;
-      }
 
-      // Create new user
-      const newUser = {
-        id: mockDatabase.getNextId('user'),
+    try {
+      // Use hybrid storage service for registration
+      const result = await storageService.register({
         name: values.name,
         email: values.email,
-        password: values.password,
-        role: "student",
-        isActive: true,
-        createdAt: new Date().toISOString().split('T')[0],
-      };
+        password: values.password
+      });
 
-      users.push(newUser);
-      mockDatabase.saveUsers(users);
+      if (result.success) {
+        // Auto login after successful registration
+        const loginResult = await dispatch(login({
+          email: values.email,
+          password: values.password
+        }));
 
-      message.success("Đăng ký thành công! Vui lòng đăng nhập.");
-      navigate("/dang-nhap");
+        if (loginResult.success) {
+          dispatch(isLogin(true));
+          message.success(result.message + " Đã tự động đăng nhập.");
+          navigate("/dashboard");
+        } else {
+          message.success(result.message + " Vui lòng đăng nhập.");
+          navigate("/dang-nhap");
+        }
+      } else {
+        message.error(result.error);
+      }
     } catch (error) {
       message.error("Có lỗi xảy ra khi đăng ký!");
     } finally {
@@ -76,7 +79,7 @@ const Register = () => {
               Đăng ký tài khoản
             </Title>
             <Text className="text-gray-600">
-              Tạo tài khoản mới để tham gia thi TSA
+              Tạo tài khoản mới để tham gia thi AECK
             </Text>
           </div>
 
@@ -106,6 +109,10 @@ const Register = () => {
               rules={[
                 { required: true, message: "Vui lòng nhập email!" },
                 { type: "email", message: "Email không hợp lệ!" },
+                {
+                  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Định dạng email không đúng!"
+                },
               ]}
             >
               <Input
@@ -183,7 +190,7 @@ const Register = () => {
                 Đăng nhập ngay
               </Link>
             </Text>
-            
+
             <div className="pt-4 border-t border-gray-100">
               <Text className="text-sm text-gray-500">
                 Bằng việc đăng ký, bạn đồng ý với{" "}
@@ -212,7 +219,7 @@ const Register = () => {
             </div>
             <div className="bg-white p-3 rounded border">
               <div className="font-medium text-red-700">👨‍💼 Admin:</div>
-              <div>Email: <code>admin@tsa.com</code></div>
+              <div>Email: <code>admin@aeck.com</code></div>
               <div>Mật khẩu: <code>admin123</code></div>
             </div>
           </div>
