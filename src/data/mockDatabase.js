@@ -448,7 +448,7 @@ class MockDatabase {
       },
       {
         id: 1,
-        title: "Đề thi AECK Toán học - Đợt 1/2024",
+        title: "Tư duy Toán học - Thử nghiệm",
         description: "Đề thi đánh giá tư duy toán học chính thức đợt 1 năm 2024. Bao gồm các câu hỏi từ cơ bản đến nâng cao về đại số, hình học và giải tích.",
         duration: 90,
         totalQuestions: 40,
